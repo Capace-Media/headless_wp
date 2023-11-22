@@ -8,6 +8,33 @@
 //     return "https://doclounge.vercel.app/api/preview?id=$pid&type=$type&secret=YvB4hp7HsFm04G8Ib4Tx";
 // }
 
+
+// Hook into the GraphQL register types action.
+add_action( 'graphql_register_types', function() {
+
+    // Register a custom field for total post count.
+    register_graphql_field( 'RootQuery', 'totalPostsCount', [
+        'type' => 'Int', // The type of the field
+        'description' => 'Returns the total count of published posts',
+        'resolve' => function() {
+            // Use WordPress function to count posts.
+            $count_posts = wp_count_posts();
+            return (int) $count_posts->publish; // Return the count of published posts
+        }
+    ]);
+
+    // Register a custom field for total page count.
+    register_graphql_field( 'RootQuery', 'totalPagesCount', [
+        'type' => 'Int', // The type of the field
+        'description' => 'Returns the total count of published pages',
+        'resolve' => function() {
+            // Use WordPress function to count pages.
+            $count_pages = wp_count_posts('page');
+            return (int) $count_pages->publish; // Return the count of published pages
+        }
+    ]);
+});
+
 function myheadless_setup() {
 
     /*
